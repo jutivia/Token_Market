@@ -15,6 +15,7 @@ const USDT = "0x55c18d10ded7968Cd980AbfE0547B410DF284413"
 const DAI = "0x001B3B4d0F3714Ca98ba10F6042DaEbF0B1B7b6F"
 const DAITokenHolder = "0x75d46b9f6a8ff92da784be6a763050f848551483";
 const USDTTokenHolder = "0xffeac40c46db67aad2f02a5fe0ae283c1cb257dd";
+const exchangerPerson = "0xc6f0303df68cdab5fa5338a9706f51225fd728dd"
 async function main() {
   // deploying the whole contract
   const tokenPrice = await ethers.getContractFactory("PriceConsumerV3");
@@ -50,7 +51,7 @@ async function main() {
     .connect(signer1)
     .transfer(
       feedPrice.address,
-      "1820342231153430000000000000000"
+      "1820342231150"
   );
   console.log("DAI balance:", await DaiToken.balanceOf(feedPrice.address))
     //impersonating a USDT account in order to get the account to be a liquidity pool for the contract
@@ -70,7 +71,17 @@ async function main() {
   console.log("Greeter deployed to:", feedPrice.address);
 
     //swapping from DAI to USDT
-  await feedPrice.checkTokens(DAI, USDT, 0.00005)
+  console.log('person about to be impersonated')
+  // @ts-ignore
+  await hre.network.provider.request({
+    method: "hardhat_impersonateAccount",
+    params: [exchangerPerson], // address to impersonate
+  });
+  const signer3: Signer = await ethers.getSigner(exchangerPerson)
+  await USDToken.connect(signer3).approve(feedPrice.address,
+    "100000000")
+  console.log('person about to swap')
+  await feedPrice.connect(signer3).checkTokens(USDT, DAI, 2)
   console.log("DAI balance after swap:", await DaiToken.balanceOf(feedPrice.address))
   console.log("usdt balance after swap:", await USDToken.balanceOf(feedPrice.address))
 
