@@ -6,9 +6,9 @@ import {IERC20} from "./IERC20.sol";
 
 contract PriceConsumerV3 {
     struct TokenOrder{
-    bool done;
     uint256 amountIn;
     address owner;
+    bool done;
 }
 
     AggregatorV3Interface internal priceFeed;
