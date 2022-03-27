@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {IERC20} from "./IERC20.sol";
 
 contract LINK_AAVE {
 
