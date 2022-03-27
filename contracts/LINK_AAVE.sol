@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
-import {IERC20} from "./IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract LINK_AAVE {
 
@@ -51,24 +51,24 @@ contract LINK_AAVE {
     }
 
     // function that converts link to AAVE 
-     function LinkToAAVE (uint _amountIn) internal{
+     function LinkToAAVE (uint _amountIn) external{
         uint LinkRate = uint256(int256(Link_Eth_exchangePrice));
         uint AAVERate = uint256(int256(AAVE_Eth_exchangePrice));
         uint ratio = (AAVERate * 100000000) / LinkRate;
         uint swappedAmount = _amountIn * ratio;
-        if ( IERC20(Aave).balanceOf(address(this))<= swappedAmount) revert InsufficientFunds();
-        assert(IERC20(Link).transferFrom(msg.sender, address(this), _amountIn));
-        assert(IERC20(Aave).transferFrom(address(this), msg.sender, (swappedAmount/100000000)));
+        if ( ERC20(Aave).balanceOf(address(this))<= swappedAmount/100000000) revert InsufficientFunds();
+        assert(ERC20(Link).transferFrom(msg.sender, address(this), _amountIn));
+        assert(ERC20(Aave).transfer(msg.sender, (swappedAmount/100000000)));
     }
-
-    function AAveToLink (uint _amountIn) internal{
+    // function that converts AAVE to Link
+    function AAveToLink (uint _amountIn) external{
         uint LinkRate = uint256(int256(Link_Eth_exchangePrice));
         uint AAVERate = uint256(int256(AAVE_Eth_exchangePrice));
         uint ratio = ( LinkRate * 100000000) / AAVERate;
         uint swappedAmount = _amountIn * ratio;
-        if ( IERC20(Aave).balanceOf(address(this))<= swappedAmount) revert InsufficientFunds();
-        assert(IERC20(Link).transferFrom(msg.sender, address(this), _amountIn));
-        assert(IERC20(Aave).transferFrom(address(this), msg.sender, (swappedAmount/100000000)));
+        if ( ERC20(Link).balanceOf(address(this))<= swappedAmount/100000000) revert InsufficientFunds();
+        assert(ERC20(Aave).transferFrom(msg.sender, address(this), _amountIn));
+        assert(ERC20(Link).transfer(msg.sender, (swappedAmount/100000000)));
     }
     
 }
