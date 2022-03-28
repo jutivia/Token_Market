@@ -4,7 +4,7 @@ pragma solidity ^0.8.4;
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import {IERC20} from "./IERC20.sol";
 
-contract LINK_AAVE {
+contract LinkAAVE {
 
     // --------- State Variables ---------
     address constant AAVE_ETH	=	0xbE23a3AA13038CfC28aFd0ECe4FdE379fE7fBfc4;
@@ -56,9 +56,9 @@ contract LINK_AAVE {
         uint AAVERate = uint256(int256(AAVE_Eth_exchangePrice));
         uint ratio = (AAVERate * 100000000) / LinkRate;
         uint swappedAmount = _amountIn * ratio;
-        if ( ERC20(Aave).balanceOf(address(this))<= swappedAmount/100000000) revert InsufficientFunds();
-        assert(ERC20(Link).transferFrom(msg.sender, address(this), _amountIn));
-        assert(ERC20(Aave).transfer(msg.sender, (swappedAmount/100000000)));
+        if ( IERC20(Aave).balanceOf(address(this))< swappedAmount/100000000) revert InsufficientFunds();
+        assert(IERC20(Link).transferFrom(msg.sender, address(this), _amountIn));
+        assert(IERC20(Aave).transfer(msg.sender, (swappedAmount/100000000)));
     }
     // function that converts AAVE to Link
     function AAveToLink (uint _amountIn) external{
@@ -66,9 +66,9 @@ contract LINK_AAVE {
         uint AAVERate = uint256(int256(AAVE_Eth_exchangePrice));
         uint ratio = ( LinkRate * 100000000) / AAVERate;
         uint swappedAmount = _amountIn * ratio;
-        if ( ERC20(Link).balanceOf(address(this))<= swappedAmount/100000000) revert InsufficientFunds();
-        assert(ERC20(Aave).transferFrom(msg.sender, address(this), _amountIn));
-        assert(ERC20(Link).transfer(msg.sender, (swappedAmount/100000000)));
+        if ( IERC20(Link).balanceOf(address(this))< swappedAmount/100000000) revert InsufficientFunds();
+        assert(IERC20(Aave).transferFrom(msg.sender, address(this), _amountIn));
+        assert(IERC20(Link).transfer(msg.sender, (swappedAmount/100000000)));
     }
     
 }
